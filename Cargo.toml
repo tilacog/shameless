@@ -1,0 +1,16 @@
+[package]
+name = "shameless"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+blahaj = "0.6"
+bip39 = "2.0"
+anyhow = "1.0"
+clap = { version = "4.5", features = ["derive"] }
+zeroize = { version = "1.8", features = ["alloc"] }
+crc = "3.2"
+
+[dev-dependencies]
+quickcheck = "1.0"
+quickcheck_macros = "1.0"
