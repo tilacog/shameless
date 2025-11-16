@@ -109,6 +109,11 @@ This project is directly based on the [`shamir39` specification](https://github.
 - This tool handles sensitive cryptographic key material.
 - There are no alternative implementations, meaning you are totally dependent on this tool if you use it. That is a dangerous situation to be in.
 
+**Consider using a multisig wallet instead:**
+- For most use cases requiring distributed control or threshold security, you probably want a multisig wallet rather than this tool
+- Multisig wallets like [Safe](https://safe.global/) (formerly Gnosis Safe) provide on-chain threshold security with much better tooling, recovery options, and ecosystem support
+- Shamir Secret Sharing is primarily useful for offline backup scenarios, not ongoing wallet management
+
 **Before using with real funds:**
 - Test with dummy mnemonics first
 - Verify reconstruction works correctly
