@@ -18,10 +18,23 @@ Binary: `./target/release/shameless`
 
 ## Usage
 
-### Split
+**SECURITY NOTE**: Mnemonics and shares are NEVER passed as command-line arguments. They are read via stdin. The tool automatically detects:
+
+1. **Interactive mode (terminal)**: Uses hidden input - nothing displayed on screen, not stored in shell history, not visible in process lists
+2. **Non-interactive mode (piped)**: Reads from stdin for scripting (see `example_usage.sh`)
+
+### Interactive Usage
+
+#### Split
 
 ```bash
-shameless split -m "legal winner thank year wave sausage worth useful legal winner thank yellow" -s 5 -t 3
+shameless split -s 5 -t 3
+```
+
+You will be prompted to enter your mnemonic (input is hidden):
+```
+Enter mnemonic (12 or 24 words):
+<type or paste mnemonic here - will not be visible>
 ```
 
 Output:
@@ -42,16 +55,37 @@ shameless analyst abandon cross will burst stick glue behind jelly base civil ra
 ...
 ```
 
-### Combine
+#### Combine
 
 ```bash
-shameless combine --shares "shameless amount abandon boring...","shameless amused abandon claw...","shameless analyst abandon cross..."
+shameless combine
+```
+
+You will be prompted to enter shares one per line (input is hidden):
+```
+Enter shamir39 shares (one per line, empty line to finish):
+<paste share 1 - will not be visible>
+<paste share 2 - will not be visible>
+<paste share 3 - will not be visible>
+<press enter on empty line>
 ```
 
 Output:
 ```
 Successfully reconstructed mnemonic:
 legal winner thank year wave sausage worth useful legal winner thank yellow
+```
+
+### Non-interactive Usage (Scripts)
+
+See `example_usage.sh` for complete examples.
+
+```bash
+# Split via pipe
+echo "word1 word2 ... word12" | shameless split -s 5 -t 3
+
+# Combine via pipe
+printf "%s\n%s\n%s\n\n" "$SHARE_1" "$SHARE_2" "$SHARE_3" | shameless combine
 ```
 
 ## How It Works
@@ -78,6 +112,8 @@ Each share is self-describing:
 - `blahaj` - Secure Shamir Secret Sharing (GF256)
 - `bip39` - BIP39 mnemonic handling
 - `clap` - CLI argument parsing
+- `rpassword` - Secure password/secret input (hidden from terminal and process lists)
+- `atty` - TTY detection for interactive vs non-interactive mode switching
 
 **Encoding:**
 - [shamir39 specification](https://github.com/iancoleman/shamir39/blob/master/specification.md)

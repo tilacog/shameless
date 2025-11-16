@@ -25,10 +25,6 @@ pub struct Cli {
 pub enum Commands {
     /// Split a mnemonic into shares
     Split {
-        /// The mnemonic phrase to split (12 or 24 words)
-        #[arg(short, long)]
-        mnemonic: String,
-
         /// Number of shares to create
         #[arg(short, long)]
         shares: u8,
@@ -38,10 +34,5 @@ pub enum Commands {
         threshold: Threshold,
     },
     /// Combine shares to reconstruct the original mnemonic
-    Combine {
-        /// shamir39 share mnemonics (comma-separated)
-        /// Each share is a single mnemonic starting with 'shamir39'
-        #[arg(short, long, value_delimiter = ',')]
-        shares: Vec<String>,
-    },
+    Combine,
 }

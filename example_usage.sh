@@ -36,11 +36,8 @@ echo
 echo "Splitting into 5 shares (threshold: 3)..."
 echo
 
-# Capture output
-SPLIT_OUTPUT=$($SHAMELESS split \
-    -m "$TEST_MNEMONIC" \
-    -s 5 \
-    -t 3)
+# Capture output - mnemonic is passed via stdin for security
+SPLIT_OUTPUT=$(echo "$TEST_MNEMONIC" | $SHAMELESS split -s 5 -t 3)
 
 echo "$SPLIT_OUTPUT"
 echo
@@ -61,9 +58,9 @@ echo "------------------------------------------------"
 echo "Using shares 1, 3, and 5 (any 3 of 5 will work)..."
 echo
 
-# Combine using shares 1, 3, and 5
-COMBINE_OUTPUT=$($SHAMELESS combine \
-    --shares "$SHARE_1,$SHARE_3,$SHARE_5")
+# Combine using shares 1, 3, and 5 - shares passed via stdin for security
+# Empty line signals end of input
+COMBINE_OUTPUT=$(printf "%s\n%s\n%s\n\n" "$SHARE_1" "$SHARE_3" "$SHARE_5" | $SHAMELESS combine)
 
 echo "$COMBINE_OUTPUT"
 echo
@@ -78,8 +75,7 @@ echo
 
 # This should fail
 set +e
-INSUFFICIENT_OUTPUT=$($SHAMELESS combine \
-    --shares "$SHARE_1,$SHARE_2" 2>&1)
+INSUFFICIENT_OUTPUT=$(printf "%s\n%s\n\n" "$SHARE_1" "$SHARE_2" | $SHAMELESS combine 2>&1)
 INSUFFICIENT_EXIT_CODE=$?
 set -e
 
@@ -108,10 +104,8 @@ echo
 echo "Splitting into 3 shares (threshold: 2)..."
 echo
 
-SPLIT_OUTPUT_24=$($SHAMELESS split \
-    -m "$TEST_MNEMONIC_24" \
-    -s 3 \
-    -t 2)
+# Mnemonic passed via stdin for security
+SPLIT_OUTPUT_24=$(echo "$TEST_MNEMONIC_24" | $SHAMELESS split -s 3 -t 2)
 
 echo "$SPLIT_OUTPUT_24"
 echo
@@ -124,8 +118,8 @@ SHARE_24_3=$(echo "$SPLIT_OUTPUT_24" | grep -A 1 "Share #3:" | tail -1)
 echo "Combining with shares 1 and 3..."
 echo
 
-COMBINE_OUTPUT_24=$($SHAMELESS combine \
-    --shares "$SHARE_24_1,$SHARE_24_3")
+# Shares passed via stdin for security
+COMBINE_OUTPUT_24=$(printf "%s\n%s\n\n" "$SHARE_24_1" "$SHARE_24_3" | $SHAMELESS combine)
 
 echo "$COMBINE_OUTPUT_24"
 echo
