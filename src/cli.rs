@@ -15,7 +15,7 @@ fn validate_threshold(s: &str) -> Result<Threshold, String> {
 
 #[derive(Parser)]
 #[command(name = "shameless")]
-#[command(about = "Split Ethereum mnemonics into Shamir Secret Shares using shamir39 encoding")]
+#[command(about = "Split Ethereum mnemonics into Shamir Secret Shares using shameless encoding")]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,

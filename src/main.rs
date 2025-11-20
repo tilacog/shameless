@@ -33,7 +33,7 @@ fn read_shares() -> Result<Vec<String>> {
 
     if atty::is(atty::Stream::Stdin) {
         // Interactive mode - use rpassword for hidden input
-        eprintln!("Enter shamir39 shares (one per line, empty line to finish):");
+        eprintln!("Enter shameless shares (one per line, empty line to finish):");
 
         loop {
             let share = rpassword::read_password().context("Failed to read share from stdin")?;

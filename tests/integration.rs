@@ -79,7 +79,7 @@ fn test_full_shamir39_encoding_round_trip() {
     let dealer = sharks.dealer(&original_entropy);
     let share_vec: Vec<_> = dealer.take(num_shares).collect();
 
-    // Encode each share as shamir39 mnemonic
+    // Encode each share using shamir39 encoding
     let encoded_shares = share_vec
         .iter()
         .enumerate()

@@ -63,7 +63,7 @@ shameless combine
 
 You will be prompted to enter shares one per line (input is hidden):
 ```
-Enter shamir39 shares (one per line, empty line to finish):
+Enter shameless shares (one per line, empty line to finish):
 <paste share 1 - will not be visible>
 <paste share 2 - will not be visible>
 <paste share 3 - will not be visible>
