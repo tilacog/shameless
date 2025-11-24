@@ -2,11 +2,19 @@
 
 Split Ethereum BIP39 mnemonics into Shamir Secret Shares using shameless encoding (directly based on the [shamir39](https://github.com/iancoleman/shamir39) specification).
 
+## 🌐 Try it in Your Browser
+
+**[Demo: Web Interface](https://tilacog.github.io/shameless/)** - Built with Rust + WebAssembly
+
+⚠️ **Demo only - do not use with real keys!** The web demo is for testing and educational purposes. For production use with real cryptocurrency keys, use the CLI tool below.
+
 ## Features
 
 - Split 12 or 24-word BIP39 mnemonics into threshold-based shares
 - Each share is a single BIP39 mnemonic with embedded metadata prefixed with the `shameless` identifier
 - Shares are self-describing (embed threshold and index)
+- **Web interface**: Browser-based demo compiled to WebAssembly
+- **CLI tool**: Secure command-line interface with hidden input
 
 ## Installation
 
@@ -120,6 +128,20 @@ Each share is self-describing:
 - 11-bit word encoding with metadata
 - Standard BIP39 English wordlist
 
+## Web Development
+
+Build and test the web interface locally:
+
+```bash
+just wasm-build   # Build WASM module
+just wasm-serve   # Serve locally on http://localhost:8000
+just wasm-dev     # Build and serve in one command
+just wasm-clean   # Clean WASM build artifacts
+just wasm-check   # Verify WASM builds without errors
+```
+
+The web interface is automatically deployed to GitHub Pages on push to main.
+
 ## Testing
 
 ```bash
@@ -132,6 +154,7 @@ Test suite includes:
 - Integration tests for split/combine workflows
 - Property-based tests (quickcheck) for randomized validation
 - Documentation tests for API examples
+- WASM module tests for browser compatibility
 
 ## Credits
 

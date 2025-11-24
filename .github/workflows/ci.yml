@@ -21,6 +21,7 @@ jobs:
       uses: dtolnay/rust-toolchain@stable
       with:
         components: rustfmt, clippy
+        targets: wasm32-unknown-unknown
 
     - name: Cache cargo registry
       uses: actions/cache@v4
@@ -51,3 +52,6 @@ jobs:
 
     - name: Run CI checks
       run: just ci
+
+    - name: Check WASM build
+      run: just wasm-check

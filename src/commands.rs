@@ -8,15 +8,16 @@ use crate::domain::{ShareIndex, SplitConfig};
 
 /// Split a mnemonic into Shamir Secret Shares encoded as shamir39 mnemonics
 ///
+/// Returns a vector of shamir39-encoded share mnemonics.
+///
 /// # Errors
 /// Returns an error if mnemonic parsing fails, share creation fails, or encoding fails
-pub fn split_mnemonic(mnemonic_str: &str, config: SplitConfig) -> Result<()> {
+pub fn split_mnemonic(mnemonic_str: &str, config: SplitConfig) -> Result<Vec<String>> {
     // Parse the input mnemonic
     let mnemonic = Mnemonic::parse_in(Language::English, mnemonic_str)
         .context("Failed to parse input mnemonic")?;
 
     let entropy = Zeroizing::new(mnemonic.to_entropy());
-    println!("Original mnemonic entropy: {} bytes", entropy.len());
 
     // Extract threshold and share count from config
     let threshold = config.threshold();
@@ -29,11 +30,8 @@ pub fn split_mnemonic(mnemonic_str: &str, config: SplitConfig) -> Result<()> {
     let dealer = sharks.dealer(&entropy);
     let share_vec: Vec<_> = dealer.take(num_shares as usize).collect();
 
-    let threshold_val = *threshold;
-    println!("\nCreated {num_shares} shares (threshold: {threshold_val})");
-    println!("You need at least {threshold_val} shares to reconstruct the secret.\n");
-
     // Encode each share as a shamir39 mnemonic
+    let mut share_mnemonics = Vec::new();
     for (idx, share) in share_vec.iter().enumerate() {
         // Convert share to bytes
         let share_bytes = Zeroizing::new(Vec::from(share));
@@ -45,31 +43,29 @@ pub fn split_mnemonic(mnemonic_str: &str, config: SplitConfig) -> Result<()> {
         let share_mnemonic =
             codec::create_share(&share_bytes, threshold, ShareIndex::new(idx_u8)?)?;
 
-        println!("Share #{}:", idx + 1);
-        println!("{}", share_mnemonic.as_str());
-        println!();
+        share_mnemonics.push(share_mnemonic.to_string());
     }
 
-    Ok(())
+    Ok(share_mnemonics)
 }
 
 /// Combine Shamir Secret Shares to reconstruct the original mnemonic
 ///
+/// Returns the reconstructed BIP39 mnemonic as a string.
+///
 /// # Errors
 /// Returns an error if share decoding fails, share combination fails, or mnemonic reconstruction fails
-pub fn combine_shares(share_strings: &[String]) -> Result<()> {
+pub fn combine_shares(share_strings: &[String]) -> Result<String> {
     if share_strings.is_empty() {
         bail!("No shares provided");
     }
-
-    println!("Parsing {} share(s)...", share_strings.len());
 
     let mut parsed_shares = Vec::new();
     let mut threshold_from_shares = None;
 
     for (idx, share_str) in share_strings.iter().enumerate() {
         // Parse shamir39 mnemonic
-        let (threshold, share_index, share_data) = codec::parse_share(share_str)
+        let (threshold, _share_index, share_data) = codec::parse_share(share_str)
             .with_context(|| format!("Failed to parse share #{}", idx + 1))?;
 
         // Validate threshold consistency
@@ -87,12 +83,6 @@ pub fn combine_shares(share_strings: &[String]) -> Result<()> {
             }
             _ => {}
         }
-
-        println!(
-            "  Share #{} (index {}): parsed successfully",
-            idx + 1,
-            *share_index
-        );
 
         // Convert to blahaj Share
         let share = blahaj::Share::try_from(share_data.as_slice())
@@ -114,7 +104,6 @@ pub fn combine_shares(share_strings: &[String]) -> Result<()> {
     }
 
     // Combine shares using blahaj
-    println!("\nCombining shares (threshold: {threshold_val})...");
     let sharks = Sharks(threshold_val);
     let recovered = Zeroizing::new(
         sharks
@@ -126,16 +115,12 @@ pub fn combine_shares(share_strings: &[String]) -> Result<()> {
     let mnemonic = Mnemonic::from_entropy(&recovered)
         .context("Failed to create mnemonic from recovered entropy")?;
 
-    println!("\nSuccessfully reconstructed mnemonic:");
-    println!("{mnemonic}");
-
-    Ok(())
+    Ok(mnemonic.to_string())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use bip39::{Language, Mnemonic};
 
     #[test]
     fn test_split_mnemonic_invalid_input() {
@@ -183,6 +168,8 @@ mod tests {
             SplitConfig::new(Threshold::new(2).unwrap(), ShareCount::new(3).unwrap()).unwrap();
         let result = split_mnemonic(mnemonic_str, config);
         assert!(result.is_ok());
+        let shares = result.unwrap();
+        assert_eq!(shares.len(), 3);
     }
 
     #[test]
@@ -193,6 +180,8 @@ mod tests {
             SplitConfig::new(Threshold::new(3).unwrap(), ShareCount::new(5).unwrap()).unwrap();
         let result = split_mnemonic(mnemonic_str, config);
         assert!(result.is_ok());
+        let shares = result.unwrap();
+        assert_eq!(shares.len(), 5);
     }
 
     #[test]
@@ -201,46 +190,22 @@ mod tests {
         // This tests the full flow through the command functions
         let mnemonic_str =
             "army van defense carry jealous true garbage claim echo media make crunch";
-        let original_mnemonic = Mnemonic::parse_in(Language::English, mnemonic_str).unwrap();
 
-        // Create shares manually to capture them for combining
-        let entropy = original_mnemonic.to_entropy();
+        // Use the split_mnemonic function directly
         let threshold = Threshold::new(2).unwrap();
         let share_count = ShareCount::new(3).unwrap();
+        let config = SplitConfig::new(threshold, share_count).unwrap();
 
-        let sharks = Sharks(*threshold);
-        let dealer = sharks.dealer(&entropy);
-        let share_vec: Vec<_> = dealer.take(*share_count as usize).collect();
-
-        // Encode shares as the split command would
-        let mut share_strings = Vec::new();
-        for (idx, share) in share_vec.iter().enumerate() {
-            let share_bytes = Vec::from(share);
-            let idx_u8 = u8::try_from(idx).unwrap_or_else(|_| unreachable!("idx fits in u8"));
-            let mnemonic =
-                codec::create_share(&share_bytes, threshold, ShareIndex::new(idx_u8).unwrap())
-                    .unwrap();
-            share_strings.push(mnemonic.to_string());
-        }
+        let share_strings = split_mnemonic(mnemonic_str, config).unwrap();
+        assert_eq!(share_strings.len(), 3);
 
         // Take 2 shares (threshold is 2)
         let selected_shares = vec![share_strings[0].clone(), share_strings[1].clone()];
 
-        // Parse and combine
-        let mut parsed_shares = Vec::new();
-        for share_str in &selected_shares {
-            let (_threshold, _index, share_data) = codec::parse_share(share_str).unwrap();
-            let share = blahaj::Share::try_from(share_data.as_slice()).unwrap();
-            parsed_shares.push(share);
-        }
+        // Use the combine_shares function directly
+        let recovered_mnemonic = combine_shares(&selected_shares).unwrap();
 
-        let recovered = sharks.recover(&parsed_shares).unwrap();
-        let recovered_mnemonic = Mnemonic::from_entropy(&recovered).unwrap();
-
-        assert_eq!(
-            original_mnemonic.to_string(),
-            recovered_mnemonic.to_string()
-        );
+        assert_eq!(mnemonic_str, recovered_mnemonic);
     }
 
     #[test]
@@ -248,30 +213,18 @@ mod tests {
         use crate::domain::{ShareCount, Threshold};
         let mnemonic_str =
             "army van defense carry jealous true garbage claim echo media make crunch";
-        let original_mnemonic = Mnemonic::parse_in(Language::English, mnemonic_str).unwrap();
 
         // Create shares with threshold 3
-        let entropy = original_mnemonic.to_entropy();
         let threshold = Threshold::new(3).unwrap();
         let share_count = ShareCount::new(5).unwrap();
+        let config = SplitConfig::new(threshold, share_count).unwrap();
 
-        let sharks = Sharks(*threshold);
-        let dealer = sharks.dealer(&entropy);
-        let share_vec: Vec<_> = dealer.take(*share_count as usize).collect();
+        let share_strings = split_mnemonic(mnemonic_str, config).unwrap();
+        assert_eq!(share_strings.len(), 5);
 
-        // Encode only 2 shares
-        let mut share_strings = Vec::new();
-        for (idx, share) in share_vec.iter().take(2).enumerate() {
-            let share_bytes = Vec::from(share);
-            let idx_u8 = u8::try_from(idx).unwrap_or_else(|_| unreachable!("idx fits in u8"));
-            let mnemonic =
-                codec::create_share(&share_bytes, threshold, ShareIndex::new(idx_u8).unwrap())
-                    .unwrap();
-            share_strings.push(mnemonic.to_string());
-        }
-
-        // Try to combine with insufficient shares
-        let result = combine_shares(&share_strings);
+        // Try to combine with only 2 shares (threshold is 3)
+        let insufficient_shares = vec![share_strings[0].clone(), share_strings[1].clone()];
+        let result = combine_shares(&insufficient_shares);
 
         // Should error with insufficient shares
         assert!(result.is_err());

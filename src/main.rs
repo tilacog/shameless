@@ -82,12 +82,40 @@ fn main() -> Result<()> {
             let share_count = ShareCount::new(shares)?;
             let config = SplitConfig::new(threshold, share_count)?;
 
-            split_mnemonic(&mnemonic, config)?;
+            // Calculate entropy size from word count for info message
+            // 12 words = 16 bytes (128 bits), 24 words = 32 bytes (256 bits)
+            let word_count = mnemonic.split_whitespace().count();
+            let entropy_bytes = if word_count == 12 { 16 } else { 32 };
+
+            // Split the mnemonic and get the shares
+            let share_mnemonics = split_mnemonic(&mnemonic, config)?;
+
+            // Print informational header
+            let threshold_val = *threshold;
+            println!("Original mnemonic entropy: {entropy_bytes} bytes");
+            println!("\nCreated {shares} shares (threshold: {threshold_val})");
+            println!("You need at least {threshold_val} shares to reconstruct the secret.\n");
+
+            // Print each share
+            for (idx, share) in share_mnemonics.iter().enumerate() {
+                println!("Share #{}:", idx + 1);
+                println!("{share}");
+                println!();
+            }
         }
         Commands::Combine => {
             // Read shares securely from stdin
             let shares = read_shares()?;
-            combine_shares(&shares)?;
+
+            // Print progress information
+            println!("Parsing {} share(s)...", shares.len());
+
+            // Combine the shares and get the recovered mnemonic
+            let recovered_mnemonic = combine_shares(&shares)?;
+
+            // Print success message
+            println!("\nSuccessfully reconstructed mnemonic:");
+            println!("{recovered_mnemonic}");
         }
     }
 
