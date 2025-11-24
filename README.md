@@ -2,11 +2,7 @@
 
 Split Ethereum BIP39 mnemonics into Shamir Secret Shares using shameless encoding (directly based on the [shamir39](https://github.com/iancoleman/shamir39) specification).
 
-## 🌐 Try it in Your Browser
-
-**[Demo: Web Interface](https://tilacog.github.io/shameless/)** - Built with Rust + WebAssembly
-
-⚠️ **Demo only - do not use with real keys!** The web demo is for testing and educational purposes. For production use with real cryptocurrency keys, use the CLI tool below.
+[Try it in Your Browser](https://tilacog.github.io/shameless/)
 
 ## Features
 
