@@ -363,7 +363,7 @@
 
                 <div class="notification is-danger" id="split-error" style="display: none;"></div>
                 <div id="split-result" style="display: none;">
-                    <h3 class="title is-4">Generated Shares</h3>
+                    <h3 class="title is-4 mt-6">Generated Shares</h3>
                     <p id="split-info"></p>
                     <div id="shares-container"></div>
                 </div>
@@ -407,7 +407,7 @@
 
                 <div class="notification is-danger" id="combine-error" style="display: none;"></div>
                 <div id="combine-result" style="display: none;">
-                    <div class="notification is-success">
+                    <div class="notification is-success mt-6">
                         Successfully recovered mnemonic!
                     </div>
                     <h3 class="title is-4">Recovered Mnemonic</h3>
@@ -537,17 +537,43 @@
         async function copyRecoveredMnemonic() {
             const element = document.getElementById('recovered-mnemonic');
             const text = element.textContent;
+            const button = event.target;
 
             try {
                 await navigator.clipboard.writeText(text);
-                const button = event.target;
                 const originalText = button.textContent;
                 button.textContent = 'Copied!';
                 setTimeout(() => {
                     button.textContent = originalText;
                 }, 2000);
             } catch (err) {
-                alert('Failed to copy to clipboard');
+                console.error('Clipboard API failed, trying fallback:', err);
+
+                // Fallback for older browsers or permission issues
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        const originalText = button.textContent;
+                        button.textContent = 'Copied!';
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                        }, 2000);
+                    } else {
+                        alert('Failed to copy to clipboard');
+                    }
+                } catch (execErr) {
+                    console.error('Fallback copy failed:', execErr);
+                    alert('Failed to copy to clipboard: ' + execErr.message);
+                }
+
+                document.body.removeChild(textarea);
             }
         }
 
