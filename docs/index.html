@@ -9,39 +9,134 @@
     <!-- Favicon -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
-    <!-- Pico.css from CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <!-- Bulma CSS from CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 
     <style>
-        :root {
-            --warning-bg: #dc2626;
-            --warning-text: #fff;
+        /* Ensure full height coverage */
+        html, body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
 
-        .security-banner {
-            background: var(--warning-bg);
-            color: var(--warning-text);
-            padding: 1rem;
-            text-align: center;
-            font-weight: bold;
-            border-radius: var(--border-radius);
-            margin-bottom: 2rem;
+        body {
+            background-color: #ffffff;
+            color: #363636;
         }
 
-        .security-banner strong {
-            font-size: 1.2em;
+        /* Dark theme for Bulma */
+        body.dark-theme {
+            background-color: #0d1117;
+            color: #f0f6fc;
         }
 
-        .tabs ul {
-            margin-bottom: 2rem;
+        body.dark-theme .box,
+        body.dark-theme .card {
+            background-color: #161b22;
+            color: #f0f6fc;
+            border-color: #30363d;
         }
 
-        .tabs button {
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 1rem 1.5rem;
+        body.dark-theme .notification {
+            background-color: #161b22;
+            color: #f0f6fc;
         }
 
+        body.dark-theme .notification.is-danger {
+            background-color: #da3633;
+            color: #ffffff;
+        }
+
+        body.dark-theme .notification.is-danger.is-light {
+            background-color: #49050a;
+            color: #ff7b72;
+        }
+
+        body.dark-theme .notification.is-warning.is-light {
+            background-color: #4d3800;
+            color: #ffa657;
+        }
+
+        body.dark-theme .notification.is-success {
+            background-color: #238636;
+            color: #ffffff;
+        }
+
+        body.dark-theme .input,
+        body.dark-theme .textarea,
+        body.dark-theme .select select {
+            background-color: #0d1117;
+            color: #f0f6fc;
+            border-color: #30363d;
+        }
+
+        body.dark-theme .input::placeholder,
+        body.dark-theme .textarea::placeholder {
+            color: #8b949e;
+        }
+
+        body.dark-theme .label {
+            color: #f0f6fc;
+        }
+
+        body.dark-theme .help {
+            color: #8b949e;
+        }
+
+        body.dark-theme .title,
+        body.dark-theme .subtitle {
+            color: #f0f6fc;
+        }
+
+        body.dark-theme .share-mnemonic {
+            background-color: #0d1117;
+            color: #f0f6fc;
+            border: 1px solid #30363d;
+        }
+
+        body.dark-theme .footer {
+            background-color: #0d1117;
+            border-top: 1px solid #30363d;
+        }
+
+        body.dark-theme .tabs a {
+            color: #8b949e;
+            border-bottom-color: #30363d;
+            background-color: transparent;
+        }
+
+        body.dark-theme .tabs a:hover {
+            color: #f0f6fc;
+            border-bottom-color: #8b949e;
+            background-color: transparent;
+        }
+
+        body.dark-theme .tabs li.is-active a {
+            color: #58a6ff;
+            border-bottom-color: #58a6ff;
+            background-color: transparent;
+        }
+
+        body.dark-theme .tabs li.is-active a:hover {
+            color: #58a6ff;
+            background-color: transparent;
+        }
+
+        body.dark-theme a {
+            color: #58a6ff;
+        }
+
+        body.dark-theme a:hover {
+            color: #79c0ff;
+        }
+
+        /* Share input spacing */
+        #shares-input-container {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Tab content visibility */
         .tab-content {
             display: none;
         }
@@ -50,12 +145,15 @@
             display: block;
         }
 
+        /* Share card styling */
         .share-card {
-            background: var(--card-background-color);
             padding: 1.5rem;
-            border-radius: var(--border-radius);
             margin-bottom: 1rem;
-            border: 1px solid var(--secondary);
+            border: 1px solid #dbdbdb;
+        }
+
+        body.dark-theme .share-card {
+            border-color: #555;
         }
 
         .share-header {
@@ -67,23 +165,21 @@
 
         .share-metadata {
             font-size: 0.9em;
-            color: var(--secondary);
+            color: #7a7a7a;
+        }
+
+        body.dark-theme .share-metadata {
+            color: #8b949e;
         }
 
         .share-mnemonic {
             font-family: monospace;
-            background: var(--code-background-color);
+            background-color: #f5f5f5;
             padding: 1rem;
-            border-radius: var(--border-radius);
+            border-radius: 4px;
             word-wrap: break-word;
             margin-bottom: 1rem;
             font-size: 0.95em;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
         }
 
         .qr-code {
@@ -91,33 +187,12 @@
             margin-top: 1rem;
             padding: 1rem;
             background: white;
-            border-radius: var(--border-radius);
+            border-radius: 4px;
             display: inline-block;
         }
 
         .qr-container {
             text-align: center;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .share-input-group {
-            margin-bottom: 1rem;
-        }
-
-        .remove-share-btn {
-            margin-left: 0.5rem;
-            padding: 0.25rem 0.5rem;
         }
 
         .hidden-mnemonic {
@@ -132,42 +207,12 @@
             user-select: text;
         }
 
-        details {
-            margin-top: 2rem;
-        }
-
-        .success-indicator {
-            background: #22c55e;
-            color: white;
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-            margin-bottom: 1rem;
-            font-weight: bold;
-        }
-
-        .error-message {
-            background: var(--warning-bg);
-            color: var(--warning-text);
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            margin-bottom: 1rem;
-        }
-
-        footer {
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--secondary);
-            text-align: center;
-            color: var(--secondary);
-        }
-
         .loading {
             opacity: 0.6;
             pointer-events: none;
         }
 
-        /* Theme toggle switch */
+        /* Theme toggle positioning */
         .theme-toggle {
             position: absolute;
             top: 1rem;
@@ -177,159 +222,230 @@
             gap: 0.5rem;
         }
 
-        .theme-toggle label {
-            display: flex;
-            align-items: center;
+        /* Custom toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
             cursor: pointer;
-            user-select: none;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 24px;
         }
 
-        .theme-toggle input[type="checkbox"] {
-            width: 3rem;
-            height: 1.5rem;
-            margin: 0;
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
         }
 
-        .theme-icon {
-            font-size: 1.2rem;
+        input:checked + .slider {
+            background-color: #3273dc;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
         }
     </style>
 </head>
 <body>
-    <main class="container">
+    <div class="container">
         <!-- Theme Toggle -->
         <div class="theme-toggle">
-            <span class="theme-icon" id="theme-icon">🌙</span>
-            <label>
-                <input type="checkbox" id="theme-switch" role="switch" checked>
+            <label class="switch">
+                <input type="checkbox" id="theme-switch" checked>
+                <span class="slider"></span>
             </label>
+            <span class="ml-2" id="theme-label">Dark</span>
         </div>
 
-        <header>
-            <h1>🔐 Shameless</h1>
-            <p>Shamir Secret Sharing for BIP39 Mnemonics</p>
-        </header>
+        <!-- Header -->
+        <section class="section">
+            <h1 class="title is-1">Shameless</h1>
+            <p class="subtitle is-4">Shamir Secret Sharing for BIP39 Mnemonics</p>
+        </section>
 
         <!-- Security Warning Banner -->
-        <aside class="security-banner" role="alert">
-            <strong>⚠️ DEMO ONLY</strong><br>
+        <div class="notification is-danger is-light">
+            <strong>DEMO ONLY</strong><br>
             Do not use with real cryptocurrency keys. This tool runs entirely in your browser,
             but you should never enter real keys into any web application.
-            Use the <a href="https://github.com/tilacog/shameless" style="color: white; text-decoration: underline;">CLI tool</a> for production use.
-        </aside>
+            Use the <a href="https://github.com/tilacog/shameless">CLI tool</a> for production use.
+        </div>
 
         <!-- Tab Navigation -->
-        <nav class="tabs">
+        <div class="tabs is-boxed is-large">
             <ul>
-                <li><button class="active" onclick="switchTab('split')">✂️ Split Mnemonic</button></li>
-                <li><button class="outline" onclick="switchTab('combine')">🔗 Combine Shares</button></li>
+                <li class="is-active" id="split-tab-link">
+                    <a onclick="switchTab('split')">Split Mnemonic</a>
+                </li>
+                <li id="combine-tab-link">
+                    <a onclick="switchTab('combine')">Combine Shares</a>
+                </li>
             </ul>
-        </nav>
+        </div>
 
         <!-- Split Tab -->
         <div id="split-tab" class="tab-content active">
-            <h2>Split Mnemonic into Shares</h2>
-            <p>Split a BIP39 mnemonic into multiple Shamir Secret Shares using the shamir39 encoding specification.</p>
+            <div class="box">
+                <h2 class="title is-3">Split Mnemonic into Shares</h2>
+                <p class="subtitle is-6">Split a BIP39 mnemonic into multiple Shamir Secret Shares using the shamir39 encoding specification.</p>
 
-            <form id="split-form">
-                <label for="mnemonic-input">
-                    BIP39 Mnemonic (12 or 24 words)
-                    <textarea id="mnemonic-input" placeholder="Enter your mnemonic here..." rows="3" required></textarea>
-                </label>
-
-                <div style="margin-top: -0.5rem; margin-bottom: 1rem;">
-                    <div class="button-group">
-                        <button type="button" onclick="generateAndFillMnemonic(12)">🎲 Generate 12-Word Test Mnemonic</button>
-                        <button type="button" onclick="generateAndFillMnemonic(24)">🎲 Generate 24-Word Test Mnemonic</button>
+                <form id="split-form">
+                    <div class="field">
+                        <label class="label" for="mnemonic-input">BIP39 Mnemonic (12 or 24 words)</label>
+                        <div class="control">
+                            <textarea class="textarea" id="mnemonic-input" placeholder="Enter your mnemonic here..." rows="3" required></textarea>
+                        </div>
                     </div>
-                    <small id="generate-warning" style="display: none;">⚠️ Generated test mnemonics are for testing only. DO NOT use with real funds.</small>
+
+                    <div class="field is-grouped mb-4">
+                        <div class="control">
+                            <button class="button is-info" type="button" onclick="generateAndFillMnemonic(12)">Generate 12-Word Test Mnemonic</button>
+                        </div>
+                        <div class="control">
+                            <button class="button is-info" type="button" onclick="generateAndFillMnemonic(24)">Generate 24-Word Test Mnemonic</button>
+                        </div>
+                    </div>
+                    <div class="notification is-warning is-light" id="generate-warning" style="display: none;">
+                        Generated test mnemonics are for testing only. DO NOT use with real funds.
+                    </div>
+
+                    <div class="columns">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label" for="shares-input">Total Shares (N)</label>
+                                <div class="control">
+                                    <input class="input" type="number" id="shares-input" min="2" max="255" value="5" required>
+                                </div>
+                                <p class="help">Number of shares to create (2-255)</p>
+                            </div>
+                        </div>
+
+                        <div class="column">
+                            <div class="field">
+                                <label class="label" for="threshold-input">Threshold (M)</label>
+                                <div class="control">
+                                    <input class="input" type="number" id="threshold-input" min="2" max="255" value="3" required>
+                                </div>
+                                <p class="help">Minimum shares needed to reconstruct (2-N)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-primary is-large" type="submit">Generate Shares</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="notification is-danger" id="split-error" style="display: none;"></div>
+                <div id="split-result" style="display: none;">
+                    <h3 class="title is-4">Generated Shares</h3>
+                    <p id="split-info"></p>
+                    <div id="shares-container"></div>
                 </div>
-
-                <div class="form-grid">
-                    <label for="shares-input">
-                        Total Shares (N)
-                        <input type="number" id="shares-input" min="2" max="255" value="5" required>
-                        <small>Number of shares to create (2-255)</small>
-                    </label>
-
-                    <label for="threshold-input">
-                        Threshold (M)
-                        <input type="number" id="threshold-input" min="2" max="255" value="3" required>
-                        <small>Minimum shares needed to reconstruct (2-N)</small>
-                    </label>
-                </div>
-
-                <button type="submit">🔒 Generate Shares</button>
-            </form>
-
-            <div id="split-error" class="error-message" style="display: none;"></div>
-            <div id="split-result" style="display: none;">
-                <h3>Generated Shares</h3>
-                <p id="split-info"></p>
-                <div id="shares-container"></div>
             </div>
         </div>
 
         <!-- Combine Tab -->
         <div id="combine-tab" class="tab-content">
-            <h2>Combine Shares to Recover Mnemonic</h2>
-            <p>Enter your shamir39 shares to reconstruct the original BIP39 mnemonic.</p>
+            <div class="box">
+                <h2 class="title is-3">Combine Shares to Recover Mnemonic</h2>
+                <p class="subtitle is-6">Enter your shamir39 shares to reconstruct the original BIP39 mnemonic. Shares can be placed in any order.</p>
 
-            <form id="combine-form">
-                <div id="shares-input-container">
-                    <div class="share-input-group">
-                        <label>
-                            Share #1
-                            <textarea class="share-input" placeholder="shameless word1 word2 ..." rows="2" required></textarea>
-                        </label>
+                <form id="combine-form">
+                    <div id="shares-input-container">
+                        <div class="field share-input-group">
+                            <label class="label">Share #1</label>
+                            <div class="control">
+                                <textarea class="textarea share-input" placeholder="shameless word1 word2 ..." rows="2" required></textarea>
+                            </div>
+                        </div>
+                        <div class="field share-input-group">
+                            <label class="label">Share #2</label>
+                            <div class="control">
+                                <textarea class="textarea share-input" placeholder="shameless word1 word2 ..." rows="2" required></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="share-input-group">
-                        <label>
-                            Share #2
-                            <textarea class="share-input" placeholder="shameless word1 word2 ..." rows="2" required></textarea>
-                        </label>
-                    </div>
-                </div>
 
-                <div class="button-group">
-                    <button type="button" onclick="addShareInput()">➕ Add Another Share</button>
-                    <button type="submit">🔓 Combine Shares</button>
-                </div>
-            </form>
-
-            <div id="combine-error" class="error-message" style="display: none;"></div>
-            <div id="combine-result" style="display: none;">
-                <div class="success-indicator">
-                    ✅ Successfully recovered mnemonic!
-                </div>
-                <h3>Recovered Mnemonic</h3>
-                <div class="share-card">
-                    <div class="share-mnemonic hidden-mnemonic" id="recovered-mnemonic" onclick="toggleMnemonicVisibility()">
-                        Click to reveal
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-info" type="button" onclick="addShareInput()">Add Another Share</button>
+                        </div>
                     </div>
-                    <div class="button-group">
-                        <button type="button" onclick="toggleMnemonicVisibility()">👁️ Toggle Visibility</button>
-                        <button type="button" onclick="copyRecoveredMnemonic()">📋 Copy to Clipboard</button>
+
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-primary is-large" type="submit">Combine Shares</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="notification is-danger" id="combine-error" style="display: none;"></div>
+                <div id="combine-result" style="display: none;">
+                    <div class="notification is-success">
+                        Successfully recovered mnemonic!
+                    </div>
+                    <h3 class="title is-4">Recovered Mnemonic</h3>
+                    <div class="box share-card">
+                        <div class="share-mnemonic hidden-mnemonic" id="recovered-mnemonic" onclick="toggleMnemonicVisibility()">
+                            Click to reveal
+                        </div>
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button is-info" type="button" onclick="toggleMnemonicVisibility()">Toggle Visibility</button>
+                            </div>
+                            <div class="control">
+                                <button class="button is-link" type="button" onclick="copyRecoveredMnemonic()">Copy to Clipboard</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
 
-        <footer>
-            <p>
-                <strong>Shameless</strong> - CLI tool for Shamir Secret Sharing of BIP39 mnemonics<br>
-                <a href="https://github.com/tilacog/shameless">GitHub Repository</a> |
-                <a href="https://github.com/iancoleman/shamir39/blob/master/specification.md">shamir39 Specification</a>
-            </p>
-            <p>
-                <small>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="content has-text-centered">
+                <p>
+                    <strong>Shameless</strong> - CLI tool for Shamir Secret Sharing of BIP39 mnemonics
+                </p>
+                <p>
+                    <a href="https://github.com/tilacog/shameless">GitHub Repository</a> |
+                    <a href="https://github.com/iancoleman/shamir39/blob/master/specification.md">shamir39 Specification</a>
+                </p>
+                <p class="is-size-7">
                     All computation happens entirely in your browser. No data is transmitted to any server.<br>
-                    Built with Rust + WebAssembly | UI: Pico.css
-                </small>
-            </p>
+                    Built with Rust + WebAssembly | UI: Bulma CSS
+                </p>
+            </div>
         </footer>
-    </main>
+    </div>
 
     <!-- QR Code Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -340,32 +456,36 @@
     <script>
         // Theme toggle
         const themeSwitch = document.getElementById('theme-switch');
-        const themeIcon = document.getElementById('theme-icon');
-        const htmlElement = document.documentElement;
+        const themeLabel = document.getElementById('theme-label');
+        const body = document.body;
 
         // Load saved theme preference or default to dark
         const savedTheme = localStorage.getItem('theme') || 'dark';
-        htmlElement.setAttribute('data-theme', savedTheme);
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+        }
         themeSwitch.checked = savedTheme === 'dark';
-        themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+        themeLabel.textContent = savedTheme === 'dark' ? 'Dark' : 'Light';
 
         // Theme toggle handler
         themeSwitch.addEventListener('change', function() {
             const newTheme = this.checked ? 'dark' : 'light';
-            htmlElement.setAttribute('data-theme', newTheme);
-            themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            if (newTheme === 'dark') {
+                body.classList.add('dark-theme');
+            } else {
+                body.classList.remove('dark-theme');
+            }
+            themeLabel.textContent = newTheme === 'dark' ? 'Dark' : 'Light';
             localStorage.setItem('theme', newTheme);
         });
 
         // Tab switching
         function switchTab(tabName) {
             // Update tab buttons
-            document.querySelectorAll('.tabs button').forEach(btn => {
-                btn.classList.remove('active');
-                btn.classList.add('outline');
+            document.querySelectorAll('.tabs li').forEach(li => {
+                li.classList.remove('is-active');
             });
-            event.target.classList.add('active');
-            event.target.classList.remove('outline');
+            document.getElementById(tabName + '-tab-link').classList.add('is-active');
 
             // Update tab content
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -383,13 +503,13 @@
             const container = document.getElementById('shares-input-container');
             const count = container.children.length + 1;
             const div = document.createElement('div');
-            div.className = 'share-input-group';
+            div.className = 'field share-input-group';
             div.innerHTML = `
-                <label>
-                    Share #${count}
-                    <textarea class="share-input" placeholder="shameless word1 word2 ..." rows="2"></textarea>
-                </label>
-                <button type="button" class="remove-share-btn secondary" onclick="removeShareInput(this)">Remove</button>
+                <label class="label">Share #${count}</label>
+                <div class="control">
+                    <textarea class="textarea share-input" placeholder="shameless word1 word2 ..." rows="2"></textarea>
+                </div>
+                <button type="button" class="button is-danger is-small mt-2" onclick="removeShareInput(this)">Remove</button>
             `;
             container.appendChild(div);
         }
@@ -422,7 +542,7 @@
                 await navigator.clipboard.writeText(text);
                 const button = event.target;
                 const originalText = button.textContent;
-                button.textContent = '✅ Copied!';
+                button.textContent = 'Copied!';
                 setTimeout(() => {
                     button.textContent = originalText;
                 }, 2000);

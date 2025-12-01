@@ -19,7 +19,7 @@ async function initWasm() {
         // Make generateMnemonic globally accessible for inline HTML scripts
         window.wasmModule = wasmModule;
 
-        console.log('✅ WASM module loaded successfully');
+        console.log('WASM module loaded successfully');
         enableForms();
     } catch (error) {
         console.error('Failed to load WASM module:', error);
@@ -78,7 +78,7 @@ async function handleSplit(event) {
     // Show loading state
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn.textContent;
-    submitBtn.textContent = '🔄 Generating...';
+    submitBtn.textContent = 'Generating...';
     submitBtn.disabled = true;
 
     try {
@@ -131,7 +131,7 @@ async function handleCombine(event) {
     // Show loading state
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn.textContent;
-    submitBtn.textContent = '🔄 Combining...';
+    submitBtn.textContent = 'Combining...';
     submitBtn.disabled = true;
 
     try {
@@ -170,16 +170,16 @@ function createShareCard(shareMnemonic, shareNumber, threshold, shareIndex) {
 
     card.innerHTML = `
         <div class="share-header">
-            <h4>Share #${shareNumber}</h4>
+            <h4 class="title is-5">Share #${shareNumber}</h4>
             <span class="share-metadata">${metadata}</span>
         </div>
         <div class="share-mnemonic">${shareMnemonic}</div>
-        <div class="button-group">
-            <button type="button" onclick="copyShareToClipboard(${shareNumber}, \`${shareMnemonic}\`, this)">
-                📋 Copy
+        <div class="buttons">
+            <button class="button is-link" type="button" onclick="copyShareToClipboard(${shareNumber}, \`${shareMnemonic}\`, this)">
+                Copy
             </button>
-            <button type="button" onclick="toggleQRCode(${shareNumber})">
-                📱 Show QR Code
+            <button class="button is-info" type="button" onclick="toggleQRCode(${shareNumber})">
+                Show QR Code
             </button>
         </div>
         <div id="qr-container-${shareNumber}" class="qr-container" style="display: none;">
@@ -197,7 +197,7 @@ window.copyShareToClipboard = async function(shareNumber, shareMnemonic, buttonE
     try {
         await navigator.clipboard.writeText(shareMnemonic);
         const originalText = button.textContent;
-        button.textContent = '✅ Copied!';
+        button.textContent = 'Copied!';
         setTimeout(() => {
             button.textContent = originalText;
         }, 2000);
@@ -216,7 +216,7 @@ window.copyShareToClipboard = async function(shareNumber, shareMnemonic, buttonE
             const successful = document.execCommand('copy');
             if (successful) {
                 const originalText = button.textContent;
-                button.textContent = '✅ Copied!';
+                button.textContent = 'Copied!';
                 setTimeout(() => {
                     button.textContent = originalText;
                 }, 2000);
@@ -261,30 +261,31 @@ window.toggleQRCode = function(shareNumber) {
         }
 
         const button = event.target;
-        button.textContent = '🙈 Hide QR Code';
+        button.textContent = 'Hide QR Code';
     } else {
         // Hide QR code
         container.style.display = 'none';
         const button = event.target;
-        button.textContent = '📱 Show QR Code';
+        button.textContent = 'Show QR Code';
     }
 };
 
 // Show error message
 function showError(element, message) {
-    element.textContent = `❌ ${message}`;
+    element.textContent = message;
     element.style.display = 'block';
 }
 
 // Show global error (for WASM loading failures)
 function showGlobalError(message) {
     const banner = document.createElement('div');
-    banner.className = 'error-message';
+    banner.className = 'notification is-danger';
     banner.style.position = 'fixed';
     banner.style.top = '1rem';
     banner.style.left = '50%';
     banner.style.transform = 'translateX(-50%)';
     banner.style.zIndex = '1000';
+    banner.style.maxWidth = '90%';
     banner.textContent = message;
     document.body.appendChild(banner);
 }
