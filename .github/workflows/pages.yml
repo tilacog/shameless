@@ -1,8 +1,14 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
+  # Trigger this workflow only after the CI workflow completes on the main branch
+  # This ensures we only deploy if all CI checks (fmt, clippy, tests) pass
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
     branches: [main]
+  # Allow manual deployment trigger that bypasses CI dependency
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -20,6 +26,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Only run if CI workflow succeeded OR this was manually triggered
+    # This prevents deployment when CI checks fail
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

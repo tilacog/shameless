@@ -5,6 +5,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  # Note: The GitHub Pages deployment workflow depends on this workflow
+  # Pages will only deploy if this CI workflow completes successfully
 
 env:
   CARGO_TERM_COLOR: always
